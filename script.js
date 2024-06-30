@@ -10,7 +10,7 @@ function makePlayer(name) {
 }
 
 const Gameboard = function createGameboard () {
-    let board = [["","",""], ["","",""], ["","",""]];
+    let board = [["x","x","x"], ["x","x","x"], ["x","x","x"]];
     const getBoard = () => board;
     const getSpace = (row,col) => board[row-1][col-1];
     const markers = ["x","o"];
@@ -60,7 +60,7 @@ const createArray = (function () {
     const fromDiag2 = () => {
         let log = [];
         for (let i = 1; i <= 3; i++) {
-            log.push(Gameboard.getSpace(i,2-i));
+            log.push(Gameboard.getSpace(i,4-i));
         };
         return log;
     }
@@ -70,7 +70,8 @@ const createArray = (function () {
 })();
     
 function isLine(arr) {
-    if (arr[0] === "") {
+    // doesn't fulfill win condition if there are three empty strings in a row 
+    if (arr[0] === "") { 
         return false;
     } else {
         return arr.every((value) => value === arr[0]);
@@ -78,26 +79,30 @@ function isLine(arr) {
 }
 
 function checkWin() {
+    let win = false;
     for (let i = 1; i <= 3; i++) {
         // check each row
-        if (isLine(Gameboard.getBoard()[i])) {
+        if (isLine(Gameboard.getBoard()[i-1])) {
             console.log(`row${i}`);
-            return true;
+            win = true;
         };
         // check each column
         if (isLine(createArray.fromCol(i))) {
             console.log(`col${i}`);
-            return true;
-        };
-        // check diag1
-        if (isLine(createArray.fromDiag1())) {
-            console.log('diag1');
-            return true;};
-        // check diag2
-        if (isLine(createArray.fromDiag2())) {
-            console.log('diag2');
-            return true;
+            win = true;
         };
     }
-    return false;
+
+    // check diag1
+    if (isLine(createArray.fromDiag1())) {
+        console.log('diag1');
+        win = true;
+    };
+    // check diag2
+    if (isLine(createArray.fromDiag2())) {
+        console.log('diag2');
+        win = true;
+    };
+
+    return win;
 };

@@ -12,13 +12,13 @@ function makePlayer(name) {
 const Gameboard = function createGameboard () {
     let board = [["","",""], ["","",""], ["","",""]];
     const getBoard = () => board;
-    const getSpace = (row,col) => board[row][col];
+    const getSpace = (row,col) => board[row-1][col-1];
     const markers = ["x","o"];
     let turn = 0;
     const placeMarker = (row,col) => {
         const marker = markers[turn];
-        if (board[row][col] === "") {
-            board[row][col] = marker;
+        if (board[row-1][col-1] === "") {
+            board[row-1][col-1] = marker;
             if(checkWin()) {
                 console.log(`${markers[turn]} wins`);
             } else {
@@ -43,7 +43,7 @@ const createArray = (function () {
   
     const fromCol = (col) => {
         let log = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 1; i <= 3; i++) {
             log.push(Gameboard.getSpace(i, col));
         };
         return log;
@@ -51,7 +51,7 @@ const createArray = (function () {
 
     const fromDiag1 = () => {
         let log = [];  
-        for (let i = 0; i < 3; i++) {
+        for (let i = 1; i <= 3; i++) {
             log.push(Gameboard.getSpace(i, i));
         };
         return log;
@@ -59,7 +59,7 @@ const createArray = (function () {
 
     const fromDiag2 = () => {
         let log = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 1; i <= 3; i++) {
             log.push(Gameboard.getSpace(i,2-i));
         };
         return log;
@@ -78,7 +78,7 @@ function isLine(arr) {
 }
 
 function checkWin() {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 1; i <= 3; i++) {
         // check each row
         if (isLine(Gameboard.getBoard()[i])) {
             console.log(`row${i}`);
@@ -101,6 +101,3 @@ function checkWin() {
     }
     return false;
 };
-
-// Generate DOM elements
-

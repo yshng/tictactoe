@@ -14,20 +14,26 @@ const Gameboard = function createGameboard () {
     const markers = ["X","O"];
     let turn = 0;
     const placeMarker = (row,col) => {
-        const marker = markers[turn];
-        const gMarker = document.createElement("p");
-        gMarker.textContent = marker;
-        if (board[row-1][col-1] === "") {
-            board[row-1][col-1] = marker;
-            const square = document.querySelector(`#s${row}${col}`);
-            square.appendChild(gMarker);
-            if(checkWin()) {
-                console.log(`${markers[turn]} wins`);
+        if (checkWin.win) {;} else {
+            const statusText = document.querySelector(".status");
+            const occupiedText = document.querySelector(".occupied");
+            const marker = markers[turn];
+            const gMarker = document.createElement("p");
+            gMarker.textContent = marker;
+            if (board[row-1][col-1] === "") {
+                occupiedText.style.visibility = "hidden";
+                board[row-1][col-1] = marker;
+                const square = document.querySelector(`#s${row}${col}`);
+                square.appendChild(gMarker);
+                if(checkWin.win) {
+                    statusText.textContent = `${markers[turn]} wins!`
+                } else {
+                    turn === 0 ? turn = 1 : turn = 0;
+                    statusText.textContent = `${markers[turn]} to move`;
+                }
             } else {
-                turn === 0 ? turn = 1 : turn = 0;
+                occupiedText.style.visibility = "visible";
             }
-        } else {
-            console.log('space already occupied, cannot place marker');
         }
     }
 
@@ -91,29 +97,30 @@ function isLine(arr) {
 
 function checkWin() {
     let win = false;
+    let winLocations = [];
     for (let i = 1; i <= 3; i++) {
         // check each row
         if (isLine(Gameboard.getBoard()[i-1])) {
-            console.log(`row${i}`);
+            push.winLocations(`row${i}`);
             win = true;
         };
         // check each column
         if (isLine(createArray.fromCol(i))) {
-            console.log(`col${i}`);
+            push.winLocations(`col${i}`);
             win = true;
         };
     }
 
     // check diag1
     if (isLine(createArray.fromDiag1())) {
-        console.log('diag1');
+        push.winLocations('diag1');
         win = true;
     };
     // check diag2
     if (isLine(createArray.fromDiag2())) {
-        console.log('diag2');
+        push.winLocations('diag2');
         win = true;
     };
 
-    return win;
+    return {win, winLocations};
 };

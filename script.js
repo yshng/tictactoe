@@ -1,7 +1,5 @@
 // Tic Tac Toe
 
-// Game logic
-
 function makePlayer(name) {
     let score = 0;
     const winGame = () => score++;
@@ -10,15 +8,19 @@ function makePlayer(name) {
 }
 
 const Gameboard = function createGameboard () {
-    let board = [["x","x","x"], ["x","x","x"], ["x","x","x"]];
+    let board = [["","",""], ["","",""], ["","",""]];
     const getBoard = () => board;
     const getSpace = (row,col) => board[row-1][col-1];
-    const markers = ["x","o"];
+    const markers = ["X","O"];
     let turn = 0;
     const placeMarker = (row,col) => {
         const marker = markers[turn];
+        const gMarker = document.createElement("p");
+        gMarker.textContent = marker;
         if (board[row-1][col-1] === "") {
             board[row-1][col-1] = marker;
+            const square = document.querySelector(`#s${row}${col}`);
+            square.appendChild(gMarker);
             if(checkWin()) {
                 console.log(`${markers[turn]} wins`);
             } else {
@@ -32,9 +34,18 @@ const Gameboard = function createGameboard () {
     return {getBoard, getSpace, placeMarker};
 }();
 
+const activateSquares = function () {
+    const squares = document.querySelectorAll(".square");
+    squares.forEach( (square) => square.addEventListener("click", () => {
+        const getRow = square.getAttribute("id").charAt(1);
+        const getCol = square.getAttribute("id").charAt(2);
+        Gameboard.placeMarker(getRow,getCol);
+    }))
+}();
+
 const checkMarker = (function () {
-    const isX = (item) => item === "x";
-    const isO = (item) => item === "o";
+    const isX = (item) => item === "X";
+    const isO = (item) => item === "O";
 
     return {isX, isO};
 })();

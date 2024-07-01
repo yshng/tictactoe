@@ -3,3 +3,41 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+:root {
+    font-family: system-ui, sans-serif;
+}
+
+main, header {
+    width: 70vw;
+    margin: 10px auto;
+    text-align: center;
+}
+
+#board {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.square {
+    aspect-ratio: 1 / 1;
+}
+
+.row1, .row2 {
+    border-bottom: 2px solid black;
+}
+
+.col2, .col3{
+    border-left: 2px solid black;
+}
+
+.square p {
+    font-size: 3rem;
+}
+
+.square:hover {
+    background-color: lightblue;
+}
+

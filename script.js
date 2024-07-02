@@ -16,7 +16,7 @@ const gameboard = function () {
     let winner = "";
     const getBoard = () => board;
     const getSpace = (row,col) => board[row-1][col-1];
-    const resetBoard = () {
+    const resetBoard = () => {
         board = [["","",""], ["","",""], ["","",""]];
         winner = "";
         turn = 0;

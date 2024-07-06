@@ -47,3 +47,7 @@ main, header {
 .occupied {
     visibility: hidden;
 }
+
+#status-div {
+    margin-top: 1em;
+}

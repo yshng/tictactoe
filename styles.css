@@ -11,7 +11,7 @@
     --win-color: #62cac9;
 }
 
-header,#board,#status-div {
+h1,#board,#status-div {
     width: 70vw;
     margin: 10px auto;
     text-align: center;
@@ -59,6 +59,7 @@ header,#board,#status-div {
     width: 100vw;
     display: grid;
     grid-template-columns: 1fr / 1fr;
+    color: #fff;
 }
 
 #player1,#player2 {
@@ -74,11 +75,22 @@ header,#board,#status-div {
     background-color: var(--player1-color);
 }
 
-#reset-button {
+#buttons {
     position: fixed;
     top: 10px;
     right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
+.edit-name {
+    font-size: .8rem;
+    color: #000000cc;
+}
+
+.edit-name:hover {
+    text-decoration: underline;
+}
 
 

@@ -9,8 +9,11 @@
 </head>
 <body>
     <header>
-        <button type="button" id="reset-button">Reset Game</button>
         <h1>Tic Tac Toe</h1>
+        <div id="buttons">
+            <button type="button" id="reset-board">Reset Board</button>
+            <button type="button" id="reset-scores">Reset Scores</button>
+        </div>
     </header>
     <main>
         <div id="board">
@@ -30,11 +33,11 @@
         </div>
         <div id="players">
             <div id="player1">
-                <p id="p1-name">Player 1 (X)</p>
+                <p id="p1-name">Player 1 [X] <span class="edit-name">(change name)</span></p>
                 <p class="score">Score: <span id="p1-score">0</span></p>
             </div>
             <div id="player2">
-                <p id="p2-name">Player 2 (O)</p>
+                <p id="p2-name">Player 2 [O] <span class="edit-name">(change name)</span></p>
                 <p class="score">Score: <span id="p2-score">0</span></p>
             </div>
         </div>

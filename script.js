@@ -13,6 +13,7 @@ const gameboard = function () {
         board = [["","",""], ["","",""], ["","",""]];
         turn = 0;
         statusCheck.winLocations = [];
+        displayController.removeHighlights();
     }
     const getTurn = () => markers[turn];
     const placeMarker = (row,col) => {
@@ -144,12 +145,26 @@ const displayController = function () {
       }
       if (statusCheck.winLocations.length !== 0) {
         statusText.textContent = `${gameboard.getTurn()} wins!`;
+        highlightWin();
       } else {
         statusText.textContent = gameboard.getTurn().concat(" to move.");
       };
     }
     const invalidMove = () => occupiedText.style.visibility = "visible";
 
-    return {updateDisplay, invalidMove, highlightWin};
+    const highlightWin = () => {
+        statusCheck.winLocations.forEach( (location) => {
+            const squares = document.querySelectorAll(`.${location}`);
+            squares.forEach( (square) => (square.style.backgroundColor = "#fdee00"));
+
+        });
+    };
+
+    const removeHighlights = () => {
+        const squares = document.querySelectorAll(".square");
+        squares.forEach( (square) => (square.style.backgroundColor = "#fff"));
+    }
+
+    return {updateDisplay, invalidMove, highlightWin, removeHighlights};
 }();
 

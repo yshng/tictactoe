@@ -1,5 +1,6 @@
 // Tic Tac Toe
 
+// --------------------------
 // Game Logic
 
 const gameboard = function () {
@@ -30,8 +31,13 @@ const gameboard = function () {
 
 }();
 
+// --------------------------
+// Functions to help check for win conditions. 
+
+// 1. Helper function to create arrays from all potential 3-in-a-row "line" locations so they can be checked using isLine function. Do not need one for rows because each row is already an array.
 
 const createArray = (function () {
+
 
     const fromCol = (col) => {
         let log = [];
@@ -60,15 +66,19 @@ const createArray = (function () {
     return {fromCol, fromDiag1, fromDiag2};
 
 })();
+
+// 2. Helper function to detect 3-in-a-row "line" in an array by checking against first value in array.
     
 function isLine(arr) {
-    // doesn't fulfill win condition if there are three empty strings in a row 
+    // Doesn't count as line if there are three empty strings in a row 
     if (arr[0] === "") { 
         return false;
     } else {
         return arr.every((value) => value === arr[0]);
     }
 }
+
+// 3. Check each array and store the locations for any detected 3-in-a-row. 
 
 const statusCheck = function () {
     let winLocations = [];
@@ -99,6 +109,10 @@ const statusCheck = function () {
     return {runCheck, winLocations};
 }();
 
+
+// --------------------------
+// Make user interaction work
+
 const clickHandler = function () {
     const squares = document.querySelectorAll(".square");
     squares.forEach( (square) => square.addEventListener("click", () => {
@@ -115,8 +129,6 @@ const clickHandler = function () {
         }
     }))
 }();
-
-// Display Control
 
 const displayController = function () {
     const statusText = document.querySelector(".status");
@@ -137,6 +149,7 @@ const displayController = function () {
       };
     }
     const invalidMove = () => occupiedText.style.visibility = "visible";
-    return {updateDisplay, invalidMove};
+
+    return {updateDisplay, invalidMove, highlightWin};
 }();
 

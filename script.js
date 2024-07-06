@@ -1,6 +1,5 @@
 // Tic Tac Toe
 
-
 // Game Logic
 
 const gameboard = function () {
@@ -12,6 +11,7 @@ const gameboard = function () {
     const resetBoard = () => {
         board = [["","",""], ["","",""], ["","",""]];
         turn = 0;
+        statusCheck.winLocations = [];
     }
     const getTurn = () => markers[turn];
     const placeMarker = (row,col) => {
@@ -19,7 +19,7 @@ const gameboard = function () {
         if (board[row-1][col-1] === "") {
             board[row-1][col-1] = marker;
             statusCheck.runCheck();
-            if (statusCheck.gameOver) {
+            if (statusCheck.winLocations.length !== 0) {
                 ;
             } else {
                 turn === 0 ? turn = 1 : turn = 0;
@@ -71,13 +71,7 @@ function isLine(arr) {
 }
 
 const statusCheck = function () {
-    let gameOver = false;
     let winLocations = [];
-
-    function logWin () {
-        gameOver = true;
-        winner = gameboard.getTurn();
-    };
 
     const runCheck = () => {
 
@@ -85,28 +79,24 @@ const statusCheck = function () {
             // check each row
             if (isLine(gameboard.getBoard()[i-1])) {
                 winLocations.push(`row${i}`);
-                logWin();
             };
             // check each column
             if (isLine(createArray.fromCol(i))) {
                 winLocations.push(`col${i}`);
-                logWin();
             };
         }
 
         // check diag1
         if (isLine(createArray.fromDiag1())) {
             winLocations.push('diag1');
-            logWin();
         };
         // check diag2
         if (isLine(createArray.fromDiag2())) {
             winLocations.push('diag2');
-            logWin();
         };
     }
 
-    return {runCheck, gameOver, winLocations};
+    return {runCheck, winLocations};
 }();
 
 const clickHandler = function () {
@@ -115,13 +105,13 @@ const clickHandler = function () {
         const p = square.firstChild;
         const getRow = p.getAttribute("id").charAt(1);
         const getCol = p.getAttribute("id").charAt(2);
-        if (!checkStatus.gameOver && gameboard.getSpace(getRow,getCol) === "") {
+        if (statusCheck.winLocations.length !== 0) {
+            ;
+        } else if (gameboard.getSpace(getRow,getCol) === "") {
             gameboard.placeMarker(getRow,getCol);
             displayController.updateDisplay();
-        } else if (!checkStatus.gameOver) {
+        } else  {
             displayController.invalidMove();
-        } else {
-            ;
         }
     }))
 }();
@@ -133,7 +123,6 @@ const displayController = function () {
     const occupiedText = document.querySelector(".occupied");
     const updateDisplay = () => {
       occupiedText.style.visibility = "hidden";
-      checkWin();
       const board = gameboard.getBoard();
       for (i = 1; i <=3; i++) {
         for (j = 1; j <= 3; j++) {
@@ -141,13 +130,13 @@ const displayController = function () {
             squareText.textContent = board[i-1][j-1];
         }
       }
-      if (gameboard.gameOver) {
-        statusText.textContent = checkWin().
-      } 
-      statusText.textContent = gameboard.getTurn().concat(" to move.");
-    };
-    const invalidMove = () => {
-        occupiedText.style.visibility = "visible";
-    };
+      if (statusCheck.winLocations.length !== 0) {
+        statusText.textContent = `${gameboard.getTurn()} wins!`;
+      } else {
+        statusText.textContent = gameboard.getTurn().concat(" to move.");
+      };
+    }
+    const invalidMove = () => occupiedText.style.visibility = "visible";
     return {updateDisplay, invalidMove};
 }();
+

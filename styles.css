@@ -6,9 +6,12 @@
 
 :root {
     font-family: system-ui, sans-serif;
+    --player1-color: #fa687f;
+    --player2-color: #6992e1;
+    --win-color: #62cac9;
 }
 
-main, header {
+header,#board,#status-div {
     width: 70vw;
     margin: 10px auto;
     text-align: center;
@@ -51,3 +54,31 @@ main, header {
 #status-div {
     margin-top: 1em;
 }
+
+#players {
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 1fr / 1fr;
+}
+
+#player1,#player2 {
+    padding: 1em;
+}
+
+#player2 {
+    grid-column-start: 2;
+    background-color: var(--player2-color);
+}
+
+#player1 {
+    background-color: var(--player1-color);
+}
+
+#reset-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+
+
+

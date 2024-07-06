@@ -155,7 +155,7 @@ const displayController = function () {
     const highlightWin = () => {
         statusCheck.winLocations.forEach( (location) => {
             const squares = document.querySelectorAll(`.${location}`);
-            squares.forEach( (square) => (square.style.backgroundColor = "#62cac9"));
+            squares.forEach( (square) => (square.style.backgroundColor = "var(--win-color)"));
 
         });
     };

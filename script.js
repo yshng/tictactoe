@@ -1,11 +1,5 @@
 // Tic Tac Toe
 
-function makePlayer(name) {
-    let score = 0;
-    const winGame = () => score++;
-    const getScore = () => score;  
-    return {name, winGame, getScore};
-}
 
 // Game Logic
 
@@ -13,12 +7,10 @@ const gameboard = function () {
     let board = [["","",""], ["","",""], ["","",""]];
     const markers = ["X","O"];
     let turn = 0;
-    let winner = "";
     const getBoard = () => board;
     const getSpace = (row,col) => board[row-1][col-1];
     const resetBoard = () => {
         board = [["","",""], ["","",""], ["","",""]];
-        winner = "";
         turn = 0;
     }
     const getTurn = () => markers[turn];
@@ -26,8 +18,9 @@ const gameboard = function () {
         const marker = markers[turn];
         if (board[row-1][col-1] === "") {
             board[row-1][col-1] = marker;
-            if (checkWin(win)){
-                winner = marker;
+            statusCheck.runCheck();
+            if (statusCheck.gameOver) {
+                ;
             } else {
                 turn === 0 ? turn = 1 : turn = 0;
             }
@@ -68,47 +61,53 @@ const createArray = (function () {
 
 })();
     
+function isLine(arr) {
+    // doesn't fulfill win condition if there are three empty strings in a row 
+    if (arr[0] === "") { 
+        return false;
+    } else {
+        return arr.every((value) => value === arr[0]);
+    }
+}
 
-
-function checkWin() {
-    let win = false;
+const statusCheck = function () {
+    let gameOver = false;
     let winLocations = [];
 
-    function isLine(arr) {
-        // doesn't fulfill win condition if there are three empty strings in a row 
-        if (arr[0] === "") { 
-            return false;
-        } else {
-            return arr.every((value) => value === arr[0]);
+    function logWin () {
+        gameOver = true;
+        winner = gameboard.getTurn();
+    };
+
+    const runCheck = () => {
+
+        for (let i = 1; i <= 3; i++) {
+            // check each row
+            if (isLine(gameboard.getBoard()[i-1])) {
+                winLocations.push(`row${i}`);
+                logWin();
+            };
+            // check each column
+            if (isLine(createArray.fromCol(i))) {
+                winLocations.push(`col${i}`);
+                logWin();
+            };
         }
-    }
 
-    for (let i = 1; i <= 3; i++) {
-        // check each row
-        if (this.isLine(gameboard.getBoard()[i-1])) {
-            push.winLocations(`row${i}`);
-            win = true;
+        // check diag1
+        if (isLine(createArray.fromDiag1())) {
+            winLocations.push('diag1');
+            logWin();
         };
-        // check each column
-        if (this.isLine(createArray.fromCol(i))) {
-            push.winLocations(`col${i}`);
-            win = true;
+        // check diag2
+        if (isLine(createArray.fromDiag2())) {
+            winLocations.push('diag2');
+            logWin();
         };
     }
 
-    // check diag1
-    if (this.isLine(createArray.fromDiag1())) {
-        push.winLocations('diag1');
-        win = true;
-    };
-    // check diag2
-    if (this.isLine(createArray.fromDiag2())) {
-        push.winLocations('diag2');
-        win = true;
-    };
-
-    return {win, winLocations, isLine};
-};
+    return {runCheck, gameOver, winLocations};
+}();
 
 const clickHandler = function () {
     const squares = document.querySelectorAll(".square");
@@ -116,22 +115,16 @@ const clickHandler = function () {
         const p = square.firstChild;
         const getRow = p.getAttribute("id").charAt(1);
         const getCol = p.getAttribute("id").charAt(2);
-        if (gameboard.getSpace(getRow,getCol) === "") {
+        if (!checkStatus.gameOver && gameboard.getSpace(getRow,getCol) === "") {
             gameboard.placeMarker(getRow,getCol);
-        } else {
+            displayController.updateDisplay();
+        } else if (!checkStatus.gameOver) {
             displayController.invalidMove();
+        } else {
+            ;
         }
-
     }))
 }();
-
-const checkMarker = (function () {
-    const isX = (item) => item === "X";
-    const isO = (item) => item === "O";
-
-    return {isX, isO};
-})();
-
 
 // Display Control
 
@@ -140,6 +133,7 @@ const displayController = function () {
     const occupiedText = document.querySelector(".occupied");
     const updateDisplay = () => {
       occupiedText.style.visibility = "hidden";
+      checkWin();
       const board = gameboard.getBoard();
       for (i = 1; i <=3; i++) {
         for (j = 1; j <= 3; j++) {
@@ -147,6 +141,9 @@ const displayController = function () {
             squareText.textContent = board[i-1][j-1];
         }
       }
+      if (gameboard.gameOver) {
+        statusText.textContent = checkWin().
+      } 
       statusText.textContent = gameboard.getTurn().concat(" to move.");
     };
     const invalidMove = () => {

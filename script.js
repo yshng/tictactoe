@@ -12,102 +12,67 @@ const gameboard = function () {
     const resetBoard = () => {
         board = [["","",""], ["","",""], ["","",""]];
         turn = 0;
-        statusCheck.winLocations = [];
-        displayController.removeHighlights();
+        statusCheck.resetWins();
     }
     const getTurn = () => markers[turn];
+    const getLastTurn = () => turn === 0 ? markers[1] : markers[0];
     const placeMarker = (row,col) => {
         const marker = markers[turn];
         if (board[row-1][col-1] === "") {
             board[row-1][col-1] = marker;
-            statusCheck.runCheck();
-            if (statusCheck.winLocations.length !== 0) {
-                ;
-            } else {
-                turn === 0 ? turn = 1 : turn = 0;
+            turn === 0 ? turn = 1 : turn = 0;
             }
         } 
-    }
-    return {getBoard, getTurn, getSpace, placeMarker, resetBoard};
+    return {getBoard, getTurn, getSpace, placeMarker, resetBoard, getLastTurn};
 
 }();
 
 // --------------------------
-// Functions to help check for win conditions. 
-
-// 1. Helper function to create arrays from all potential 3-in-a-row "line" locations so they can be checked using isLine function. Do not need one for rows because each row is already an array.
-
-const createArray = (function () {
-
-
-    const fromCol = (col) => {
-        let log = [];
-        for (let i = 1; i <= 3; i++) {
-            log.push(gameboard.getSpace(i, col));
-        };
-        return log;
-    }
-
-    const fromDiag1 = () => {
-        let log = [];  
-        for (let i = 1; i <= 3; i++) {
-            log.push(gameboard.getSpace(i, i));
-        };
-        return log;
-    }
-
-    const fromDiag2 = () => {
-        let log = [];
-        for (let i = 1; i <= 3; i++) {
-            log.push(gameboard.getSpace(i,4-i));
-        };
-        return log;
-    }
-
-    return {fromCol, fromDiag1, fromDiag2};
-
-})();
-
-// 2. Helper function to detect 3-in-a-row "line" in an array by checking against first value in array.
-    
-function isLine(arr) {
-    // Doesn't count as line if there are three empty strings in a row 
-    if (arr[0] === "") { 
-        return false;
-    } else {
-        return arr.every((value) => value === arr[0]);
-    }
-}
-
-// 3. Check each array and store the locations for any detected 3-in-a-row. 
+// Check for win conditions. 
 
 const statusCheck = function () {
     let winLocations = [];
+    const getWins = () => winLocations;
+    const resetWins = () => winLocations = [];
+    const isLine = function (arr) {
+        // Doesn't count as line if there are three empty strings in a row 
+        if (arr[0] === "") { 
+            return false;
+        } else {
+            return arr.every((value) => value === arr[0]);
+        };
+    }
+
+    const makeArray = function (nodels) {
+        log = [];
+        nodels.forEach( (item) => log.push(item.textContent))
+        return log;
+    }
 
     const runCheck = () => {
 
+        // check each row and column
         for (let i = 1; i <= 3; i++) {
-            // check each row
-            if (isLine(gameboard.getBoard()[i-1])) {
+            const row = document.querySelectorAll(`.row${i} > p`)
+            if (isLine(makeArray(row))) {
                 winLocations.push(`row${i}`);
             };
-            // check each column
-            if (isLine(createArray.fromCol(i))) {
+            const col = document.querySelectorAll(`.col${i} > p`)
+            if (isLine(makeArray(col))) {
                 winLocations.push(`col${i}`);
             };
         }
 
-        // check diag1
-        if (isLine(createArray.fromDiag1())) {
-            winLocations.push('diag1');
-        };
-        // check diag2
-        if (isLine(createArray.fromDiag2())) {
-            winLocations.push('diag2');
-        };
+        // check diagonals
+        for (let i = 1; i <= 2; i++) {
+            const diag = document.querySelectorAll(`.diag${i} > p`)
+            if (isLine(makeArray(diag))) {
+                winLocations.push(`diag${i}`);
+            };
+       }
     }
 
-    return {runCheck, winLocations};
+    return {runCheck, getWins, resetWins};
 }();
 
 
@@ -116,11 +81,12 @@ const statusCheck = function () {
 
 const clickHandler = function () {
     const squares = document.querySelectorAll(".square");
+
     squares.forEach( (square) => square.addEventListener("click", () => {
         const p = square.firstChild;
         const getRow = p.getAttribute("id").charAt(1);
         const getCol = p.getAttribute("id").charAt(2);
-        if (statusCheck.winLocations.length !== 0) {
+        if (statusCheck.getWins().length !== 0) {
             ;
         } else if (gameboard.getSpace(getRow,getCol) === "") {
             gameboard.placeMarker(getRow,getCol);
@@ -128,7 +94,16 @@ const clickHandler = function () {
         } else  {
             displayController.invalidMove();
         }
-    }))
+    }));
+
+    const resetBoardButton = document.querySelector("#reset-board");
+    resetBoardButton.addEventListener("click", () => {
+        gameboard.resetBoard();
+        displayController.removeHighlights();
+        displayController.updateDisplay();
+    });
+
+
 }();
 
 const displayController = function () {
@@ -143,17 +118,18 @@ const displayController = function () {
             squareText.textContent = board[i-1][j-1];
         }
       }
-      if (statusCheck.winLocations.length !== 0) {
-        statusText.textContent = `${gameboard.getTurn()} wins!`;
+      statusCheck.runCheck();
+      if (statusCheck.getWins().length !== 0) {
+        statusText.textContent = `${gameboard.getLastTurn()} wins!`;
         highlightWin();
       } else {
-        statusText.textContent = gameboard.getTurn().concat(" to move.");
+        statusText.textContent = gameboard.getLastTurn().concat(" to move.");
       };
     }
     const invalidMove = () => occupiedText.style.visibility = "visible";
 
     const highlightWin = () => {
-        statusCheck.winLocations.forEach( (location) => {
+        statusCheck.getWins().forEach( (location) => {
             const squares = document.querySelectorAll(`.${location}`);
             squares.forEach( (square) => (square.style.backgroundColor = "var(--win-color)"));
 
